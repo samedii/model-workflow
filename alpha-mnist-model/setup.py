@@ -7,5 +7,5 @@ setup(
    author='Richard Löwenström',
    author_email='samedii@github.com',
    packages=['alpha_mnist_model'],
-   install_requires=['mnist-problem', 'torch', 'torchvision'],
+   install_requires=['mnist-problem', 'torch', 'torchvision', 'model-suite'],
 )
