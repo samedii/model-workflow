@@ -1,5 +1,7 @@
+import os
 import torch
 import torch.utils.data
+import tensorboardX as tbx
 import logging
 logger = logging.getLogger(__name__)
 
@@ -26,9 +28,21 @@ def train(config):
     model = Model().to(device)
     optimizer = torch.optim.SGD(model.parameters(), lr=config.learning_rate, momentum=config.momentum)
 
+    tb = tbx.SummaryWriter(log_dir=config.model_dir) # TODO: examples
+    save_dir = os.path.join(config.model_dir, 'save') # TODO: move to model-suite?
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
     for epoch in range(1, config.n_epochs + 1):
         train_epoch(config, model, device, train_loader, optimizer, epoch)
         eval_epoch(config, model, device, validate_loader)
+
+        n_epochs_chars = len(str(config.n_epochs))
+        torch.save(dict(
+            epoch=epoch,
+            model=model.state_dict(),
+            optimizer=optimizer.state_dict(),
+        ), os.path.join(save_dir, f'epoch{epoch:0{n_epochs_chars}d}.pth'))
 
 
 def train_epoch(config, model, device, train_loader, optimizer, epoch):
