@@ -37,7 +37,7 @@ def get_dataset(type='train'):
     train_ds, val_ds = torch.utils.data.random_split(ds, [n_training_observations, n_observations - n_training_observations])
     if type == 'train':
         return train_ds
-    elif type == 'val':
+    elif type == 'validate':
         return val_ds
     else:
         raise Exception('Unknown type provided')
