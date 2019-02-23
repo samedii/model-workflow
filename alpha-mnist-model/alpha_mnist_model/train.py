@@ -1,5 +1,8 @@
 import torch
 import torch.utils.data
+import logging
+logger = logging.getLogger(__name__)
+
 
 import didactic_meme as model_suite
 import mnist_problem
@@ -8,6 +11,8 @@ from .model import Model
 
 
 def train(config):
+    model_suite.setup_loggers(config)
+
     torch.manual_seed(config.seed)
 
     device = torch.device('cuda' if config.cuda else 'cpu')
@@ -37,7 +42,7 @@ def train_epoch(config, model, device, train_loader, optimizer, epoch):
         loss.backward()
         optimizer.step()
         if batch_idx % config.log_interval == 0:
-            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+            logger.info('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item()))
 
@@ -56,7 +61,7 @@ def eval_epoch(config, model, device, eval_loader):
 
     eval_loss /= len(eval_loader.dataset)
 
-    # print('\nEval set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+    # logger.info('\nEval set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
     #     eval_loss, correct, len(eval_loader.dataset),
     #     100. * correct / len(eval_loader.dataset)))
 
